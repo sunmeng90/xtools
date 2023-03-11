@@ -8,18 +8,18 @@ type SampleConfig struct {
 }
 
 type CustomConfig struct {
-	Name     string
-	Prop1    int32
-	Prop2    bool
-	Time1    time.Duration
-	Time2    time.Duration
-	Time3    time.Duration
-	Time4    time.Duration
-	Time5    time.Duration
-	Str_arr1 []string
-	Int_arr1 []int32
-	Map1     map[string]interface{}
-	Redis    RedisConfig
+	Name    string
+	Prop1   int32
+	Prop2   bool
+	Time1   time.Duration
+	Time2   time.Duration
+	Time3   time.Duration
+	Time4   time.Duration
+	Time5   time.Duration
+	StrArr1 []string `yaml:"str_arr1"` // by default mapstructure: "str_arr1"`
+	IntArr1 []int32  `yaml:"int_arr1"`
+	Map1    map[string]interface{}
+	Redis   RedisConfig
 }
 
 type DbConfig struct {

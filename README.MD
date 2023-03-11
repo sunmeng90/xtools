@@ -1,3 +1,9 @@
+## Example
+
+```cmd
+./x --config ../config/x.yaml stringer reverse abc
+```
+
 ## Concept(Cobra)
 
 **Commands** represent actions, **Args** are things and **Flags** are modifiers for those actions.  
@@ -42,7 +48,64 @@ The following validators are built in:
 * `RangeArgs(min, max)` - the command will report an error if the number of args is not between the minimum and maximum
   number of expected args.
 
-###     
+## Config(Viper)
+
+Viper uses the following precedence order. Each item takes precedence over the item below it:
+
+* explicit call to `Set`
+* flag
+* env
+* config
+* key/value store
+* default
+
+Config Overrides
+
+```go
+viper.Set("Verbose", true)
+viper.Set("LogFile", LogFile)
+```
+
+Bind to flags(Pflags)
+Viper has the ability to bind to flags. Specifically, Viper supports Pflags as used in the Cobra library.
+
+```go 
+serverCmd.Flags().Int("port", 1138, "Port to run Application server on")
+viper.BindPFlag("port", serverCmd.Flags().Lookup("port"))
+```
+
+Get value from viper
+In Viper, there are a few ways to get a value depending on the value’s type. The following functions and methods exist:
+
+```go
+Get(key string) : interface{}
+GetBool(key string) : bool
+GetFloat64(key string) : float64
+GetInt(key string) : int
+GetIntSlice(key string) : []int
+GetString(key string) : string
+GetStringMap(key string) : map[string]interface{}
+GetStringMapString(key string) : map[string]string
+GetStringSlice(key string) : []string
+GetTime(key string) : time.Time
+GetDuration(key string) : time.Duration
+IsSet(key string) : bool
+AllSettings() : map[string]interface{}
+```
+
+One important thing to recognize is that each Get function will return a zero value if it’s not found. To check if a
+given key exists, the `IsSet()` method has been provided.
+
+Viper can get subset of the configuration
+
+```go 
+cache1Config := viper.Sub("cache.cache1")
+if cache1Config == nil { // Sub returns nil if the key cannot be found
+	panic("cache configuration not found")
+}
+
+cache1 := NewCache(cache1Config)
+```
 
 ## Build(Cross platform)
 
