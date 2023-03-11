@@ -1,0 +1,28 @@
+custom:
+  name: val1
+  prop1: 123
+  prop2: true
+  time1: 20ms
+  time2: 2s
+  time3: 2m
+  time4: 2h
+  time5: 1h2m3s4ms
+  str_arr1:
+    - abc
+    - 123
+  int_arr1:
+    - 999
+    - 2
+  map1:
+    k1: v1
+    k2:
+      k2_1: v21
+      k2_2: v22
+    k3:
+      - 123
+      - 456
+
+db:
+  redis:
+    host: localhost
+    port: 8381

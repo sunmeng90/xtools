@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	config2 "github.com/sunmeng90/go/xtools/config"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -71,5 +72,48 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		printConfig()
 	}
+}
+
+func printConfig() {
+	fmt.Printf("===============Get sample config by key: ===============\n")
+	fmt.Printf("custom.name: %v\n", viper.Get("custom.name"))
+	fmt.Printf("custom.name: %v\n", viper.GetString("custom.name"))
+	fmt.Printf("custom.prop1: %v\n", viper.GetInt("custom.prop1"))
+	fmt.Printf("custom.prop2: %v\n", viper.GetBool("custom.prop2"))
+	fmt.Printf("custom.time1: %v\n", viper.GetDuration("custom.time1"))
+	fmt.Printf("custom.time2: %v\n", viper.GetDuration("custom.time2"))
+	fmt.Printf("custom.time3: %v\n", viper.GetDuration("custom.time3"))
+	fmt.Printf("custom.time4: %v\n", viper.GetDuration("custom.time4"))
+	fmt.Printf("custom.time5: %v\n", viper.GetDuration("custom.time5"))
+	fmt.Printf("custom.str_arr1: %v\n", viper.GetStringSlice("custom.str_arr1"))
+	fmt.Printf("custom.int_arr1: %v\n", viper.GetIntSlice("custom.int_arr1"))
+	fmt.Printf("custom.map1: %v\n", viper.GetStringMap("custom.map1"))
+	fmt.Printf("custom.map1.k2: %v\n", viper.GetStringMapString("custom.map1.k2"))
+
+	fmt.Printf("===============Unmarshal sample config and get Config: ===============\n")
+	var sampleConfig config2.SampleConfig
+	// viper.UnmarshalKey("sample1", &sampleConfig)
+	viper.Unmarshal(&sampleConfig)
+	fmt.Printf("custom.name: %v\n", sampleConfig.Custom.Name)
+	fmt.Printf("custom.prop1: %v\n", sampleConfig.Custom.Prop1)
+	fmt.Printf("custom.prop2: %v\n", sampleConfig.Custom.Prop2)
+	fmt.Printf("custom.time1: %v\n", sampleConfig.Custom.Time1)
+	fmt.Printf("custom.time2: %v\n", sampleConfig.Custom.Time2)
+	fmt.Printf("custom.time3: %v\n", sampleConfig.Custom.Time3)
+	fmt.Printf("custom.time4: %v\n", sampleConfig.Custom.Time4)
+	fmt.Printf("custom.time5: %v\n", sampleConfig.Custom.Time5)
+	fmt.Printf("custom.str_arr1: %v\n", sampleConfig.Custom.Str_arr1)
+	fmt.Printf("custom.int_arr1: %v\n", sampleConfig.Custom.Int_arr1)
+	fmt.Printf("custom.map1: %v\n", sampleConfig.Custom.Map1)
+	fmt.Printf("custom.map1.k2: %v\n", sampleConfig.Custom.Map1["k2"])
+	fmt.Printf("custom.redis.host: %v\n", sampleConfig.Db.Redis.Host)
+	fmt.Printf("custom.redis.port: %v\n", sampleConfig.Db.Redis.Port)
+
+	fmt.Printf("===============Get all settings: ===============\n")
+
+	fmt.Printf("%v\n", viper.AllSettings())
+	fmt.Printf("===============End of printing config ===============\n")
+
 }
