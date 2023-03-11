@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/sunmeng90/go/cobra/pkg/stringer"
+	"github.com/sunmeng90/go/xtools/pkg/stringer"
 
 	"github.com/spf13/cobra"
 )
@@ -23,9 +23,9 @@ var stringerCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.AddCommand(stringerCmd)
 	stringerCmd.AddCommand(reverseCmd)
 	stringerCmd.AddCommand(lenCmd)
-	rootCmd.AddCommand(stringerCmd)
 	lenCmd.Flags().BoolVarP(&onlyDigits, "digits", "d", false, "Count only digits")
 }
 

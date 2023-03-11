@@ -1,4 +1,4 @@
-module github.com/sunmeng90/go/cobra
+module github.com/sunmeng90/go/xtools
 
 go 1.20
 

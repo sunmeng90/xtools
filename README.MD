@@ -1,3 +1,6 @@
+
+## Build(Cross platform)
+
 ```cmd
 SET CGO_ENABLED=0
 SET GOOS=linux
@@ -18,6 +21,12 @@ GOOS=linux GOARCH=amd64 go build -o bin/x main.go
 
 # 32-bit
 GOOS=linux GOARCH=386 go build -o bin/x32 main.go
+```
+
+set version at compile time
+```bash
+# build the xtools CLI in version 0.0.2
+go build -o ./bin/x -ldflags="-X 'github.com/sunmeng90/go/xtools/cmd.version=0.0.2'" main.go
 ```
 
 ref:
