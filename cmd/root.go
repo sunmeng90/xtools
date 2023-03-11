@@ -12,11 +12,13 @@ import (
 )
 
 var cfgFile string
+var version = "v0.0.1"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "cobra",
-	Short: "A brief description of your application",
+	Use:     "x",
+	Version: version,
+	Short:   "A brief description of your application",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
 
