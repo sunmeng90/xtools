@@ -20,7 +20,7 @@ var dateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		now := time.Now()
 		for _, t := range tz {
-			fmt.Printf("%5s: %s\n", t, date.Format(now, "Local"))
+			fmt.Printf("%5s: %s\n", t, date.Format(now, t))
 		}
 	},
 }
