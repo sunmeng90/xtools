@@ -138,5 +138,31 @@ set version at compile time
 go build -o ./bin/x -ldflags="-X 'github.com/sunmeng90/go/xtools/cmd.version=0.0.2'" main.go
 ```
 
+## completions
+
+### powershell
+
+```cmd
+# generate completion script
+x completion powershell > competion.ps1
+
+# show powershell profile path
+echo $Profile
+
+# copy-paste completion.ps1 to profile path
+
+# register completion type(choose one type)
+Set-PSReadLineKeyHandler -Key Tab -Function Tab
+Set-PSReadLineKeyHandler -Key Tab -Function Complete
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+
+# add executable bin to path
+# reload powershell environment path
+# $Env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")  
+```
+
+
 ref:
 https://umarcor.github.io/cobra/
+
+https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.3
