@@ -26,7 +26,14 @@ func TestFetchAllWithContext(t *testing.T) {
 			name: "github base",
 			args: args{
 				path:    "I:\\ws\\GitHub\\",
-				timeout: "5m",
+				timeout: "15s",
+			},
+		},
+		{
+			name: "not exist folder",
+			args: args{
+				path:    "asfdsdafsd",
+				timeout: "5s",
 			},
 		},
 	}

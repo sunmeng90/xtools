@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"context"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/sunmeng90/go/xtools/pkg/git"
 	"time"
@@ -44,6 +45,7 @@ var fetchCmd = &cobra.Command{
 		}
 
 		path, _ := cmd.Flags().GetString("path")
+		log.Infof("Fetch all repositories in %s with in %s", path, timeout)
 		git.FetchAllWithContext(cmd.Context(), path)
 	},
 }

@@ -4,15 +4,11 @@ import (
 	"context"
 	"errors"
 	"github.com/go-git/go-git/v5"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"sync"
 )
-
-func init() {
-	log.SetFlags(log.Ldate | log.Ltime | log.Llongfile)
-}
 
 func FetchAllWithContext(ctx context.Context, path string) {
 	entryChan := make(chan string, 1)
@@ -26,7 +22,7 @@ func FetchAllWithContext(ctx context.Context, path string) {
 		}()
 	}
 	wg.Wait()
-	log.Printf("fetch all finished")
+	log.Info("fetch all finished")
 }
 
 func work(ctx context.Context, entryChan <-chan string) error {
@@ -36,12 +32,12 @@ func work(ctx context.Context, entryChan <-chan string) error {
 			return ctx.Err()
 		case path, ok := <-entryChan:
 			if !ok {
-				log.Printf("entry channel closed, work exits")
+				log.Info("entry channel closed, work exits")
 				return nil
 			}
 			err := fetchRepo(ctx, path)
 			if err != nil {
-				log.Printf("failed to fetch repo in %s, reason: %s", path, err)
+				log.Infof("failed to fetch repo in %s, reason: %s", path, err)
 			}
 		}
 	}
@@ -83,7 +79,7 @@ func scanRepos(ctx context.Context, basePath string, entryChan chan<- string) er
 			inner:
 				for _, subEntry := range entryDir {
 					if subEntry.Name() == ".git" {
-						log.Printf("found git repo in %s", entryPath)
+						log.Infof("found git repo in %s", entryPath)
 						entryChan <- entryPath
 						break inner
 					}
@@ -91,7 +87,7 @@ func scanRepos(ctx context.Context, basePath string, entryChan chan<- string) er
 			}
 		}
 	}
-	log.Printf("finish scan all sub folders. close channel")
+	log.Info("finish scan all sub folders. close channel")
 	close(entryChan)
 	return nil
 }
