@@ -16,6 +16,13 @@ func TestFetchAllWithContext(t *testing.T) {
 		args args
 	}{
 		{
+			name: "current folder",
+			args: args{
+				path:    "I:\\ws\\GitHub\\sunmeng90\\leetcode-go",
+				timeout: "5s",
+			},
+		},
+		{
 			name: "empty base",
 			args: args{
 				path:    "I:\\ws\\GitHub\\sunmeng90\\go\\xtools\\pkg\\git",

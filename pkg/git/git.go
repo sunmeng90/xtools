@@ -79,6 +79,10 @@ func scanRepos(ctx context.Context, basePath string, entryChan chan<- string) er
 			return ctx.Err()
 		default:
 			if entry.IsDir() {
+				if entry.Name() == ".git" {
+					log.Infof("found git repo in %s", basePath)
+					entryChan <- basePath
+				}
 				entryPath := filepath.Join(basePath, entry.Name())
 				entryDir, _ := os.ReadDir(entryPath)
 			inner:
