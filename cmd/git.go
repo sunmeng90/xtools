@@ -45,7 +45,7 @@ var fetchCmd = &cobra.Command{
 		}
 
 		path, _ := cmd.Flags().GetString("path")
-		log.Infof("Fetch all repositories in %s with in %s", path, timeout)
+		log.Infof("start fetching all repositories in %s, timeout: %s", path, timeout)
 		git.FetchAllWithContext(cmd.Context(), path)
 	},
 }
