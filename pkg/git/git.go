@@ -3,12 +3,18 @@ package git
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"sync"
 )
+
+type Repo struct {
+	LocalPath string
+}
 
 func FetchAllWithContext(ctx context.Context, path string) {
 	entryChan := make(chan string, 1)
@@ -98,4 +104,100 @@ func scanRepos(ctx context.Context, basePath string, entryChan chan<- string) er
 	}
 	log.Info("finish scan all sub folders. close channel")
 	return nil
+}
+
+// CheckoutBranchOrHash create a new branch based on another branch or revision
+func CheckoutBranchOrHash(repoPath string, branchOrHash string) error {
+	r, err := openRepoInPath(repoPath)
+	if err != nil {
+		log.Errorf("failed to open repo in %s, err: %s", repoPath, err)
+		return err
+	}
+	return CheckoutBranchWithRepo(r, branchOrHash)
+}
+
+func openRepoInPath(repoPath string) (*git.Repository, error) {
+	path, err := resolvePath(repoPath)
+	if err != nil {
+		return nil, err
+	}
+	r, err := git.PlainOpenWithOptions(path, &git.PlainOpenOptions{
+		DetectDotGit:          false,
+		EnableDotGitCommonDir: false,
+	})
+	return r, err
+}
+
+func resolvePath(repoPath string) (string, error) {
+	if repoPath == "" {
+		repoPath = "."
+	}
+	path, err := filepath.Abs(repoPath)
+	if err != nil {
+		return "", err
+	}
+	return path, nil
+}
+
+func CreateBranch(repoPath, targetBranchName, srcRev string) error {
+	r, err := openRepoInPath(repoPath)
+	if err != nil {
+		log.Errorf("failed to open reop in %s, err: %s", repoPath, err)
+		return err
+	}
+
+	hash, err := r.ResolveRevision(plumbing.Revision(srcRev))
+	if err != nil {
+		log.Errorf("failed to resolve revision %s. err: %s", srcRev, err)
+		return err
+	}
+
+	refForBranch := plumbing.NewHashReference(
+		plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", targetBranchName)), *hash)
+	err = r.Storer.SetReference(refForBranch)
+	if err == nil {
+		log.Infof("create rev " + refForBranch.String())
+	}
+	return err
+}
+
+func CreateBranchForRepo(repo Repo, srcRev, targetBranchName string) error {
+	return CreateBranch(repo.LocalPath, targetBranchName, srcRev)
+}
+
+func CheckoutBranchOrHashForRepo(repo Repo, branchOrHash string) error {
+	r, err := git.PlainOpenWithOptions(repo.LocalPath, &git.PlainOpenOptions{
+		DetectDotGit:          false,
+		EnableDotGitCommonDir: false,
+	})
+	if err != nil {
+		log.Errorf("failed to open reop in %s, err: %s", repo, err)
+		return err
+	}
+	return CheckoutBranchWithRepo(r, branchOrHash)
+}
+
+func CheckoutBranchWithRepo(r *git.Repository, branchOrHash string) error {
+	w, err := r.Worktree()
+	if err != nil {
+		return err
+	}
+
+	branchRef := fmt.Sprintf("refs/heads/%s", branchOrHash)
+	_, err = r.Storer.Reference(plumbing.ReferenceName(branchRef))
+	if err == nil {
+		log.Infof("checkout rev %s", branchRef)
+		return w.Checkout(&git.CheckoutOptions{
+			Branch: plumbing.ReferenceName(branchRef),
+			Create: false,
+			Keep:   true,
+		})
+	}
+
+	hash, err := r.ResolveRevision(plumbing.Revision(branchOrHash))
+	if err != nil {
+		log.Errorf("failed to resolve revision [%s]. err: %s", branchOrHash, err)
+		return err
+	}
+	return w.Checkout(&git.CheckoutOptions{Hash: *hash, Create: false})
 }

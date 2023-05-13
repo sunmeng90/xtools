@@ -50,11 +50,43 @@ var fetchCmd = &cobra.Command{
 	},
 }
 
+var checkoutCmd = &cobra.Command{
+	Use:   "checkout",
+	Short: "checkout a revision/branch",
+	Run: func(cmd *cobra.Command, args []string) {
+		rev := "main"
+		if len(args) != 0 {
+			rev = args[0]
+		}
+		repoPath, _ := cmd.Flags().GetString("path")
+		git.CheckoutBranchOrHash(repoPath, rev)
+	},
+}
+
+var branchCmd = &cobra.Command{
+	Use:   "branch",
+	Short: "create a branch from a revision/branch",
+	Args:  cobra.MinimumNArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		targetBranch, rev := args[0], args[1]
+		repoPath, _ := cmd.Flags().GetString("path")
+		git.CreateBranch(repoPath, targetBranch, rev)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(gitCmd)
+
 	gitCmd.AddCommand(fetchCmd)
 	fetchCmd.Flags().StringP("timeout", "t", "", "--timeout 1s")
 	fetchCmd.Flags().StringP("path", "p", ".", "-path .")
+
+	gitCmd.AddCommand(checkoutCmd)
+	checkoutCmd.Flags().String("path", ".", "--path .")
+
+	gitCmd.AddCommand(branchCmd)
+	branchCmd.Flags().String("path", ".", "--path .")
+
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
