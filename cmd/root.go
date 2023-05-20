@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/viper"
 	config2 "github.com/sunmeng90/go/xtools/config"
 	"os"
+	"path/filepath"
 )
 
 var cfgFile string
@@ -48,16 +49,25 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.xtool.yaml)")
 }
 
 func initLog() {
+
+	home, _ := os.UserHomeDir()
+	logFile, err := os.OpenFile(filepath.Join(home, ".xtools", "xtools.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		fmt.Println("open log file failed, err:", err)
+		return
+	}
 	log.SetLevel(log.TraceLevel)
-	log.SetOutput(os.Stdout)
+	// log.SetOutput(os.Stdout)
+	log.SetOutput(logFile)
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05",
+		PadLevelText:    false,
+	})
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -73,7 +83,7 @@ func initConfig() {
 		// Search config in home directory with name ".cobra" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".cobra")
+		viper.SetConfigName(".xtools")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -81,7 +91,7 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
-		parseSampleConfig()
+		// parseSampleConfig()
 	}
 }
 
